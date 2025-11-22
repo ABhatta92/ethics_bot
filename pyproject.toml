@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ethics_bot"
+version = "0.1.0"
+description = "Scripture RAG + Performance Engineering Project"
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "polars",
+    "numpy",
+    "pandas",  
+    "sentence-transformers",
+    "faiss-cpu",
+    "pyyaml",
+    "tqdm",
+    "rich",
+    "matplotlib",
+    "seaborn",
+    "loguru",
+    "requests",
+    "beautifulsoup4",
+    "unidecode",
+    "fastapi",
+    "uvicorn",
+    "logging",
+    "colorama",
+]
+
+# Optional: Jupyter ecosystem
+[project.optional-dependencies]
+jupyter = [
+    "jupyterlab",
+    "ipykernel",
+    "ipywidgets",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]

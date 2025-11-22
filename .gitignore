@@ -1,0 +1,64 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.pyc
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+
+# Logs
+logs/*
+!logs/.gitkeep
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dll
+*.dylib
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+.jupyter/
+**/.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# Jupyter autosave files
+*.~ipynb
+
+# --- VSCode ---
+.vscode/
+.history/
+*.code-workspace
+
+# --- OS Garbage ---
+.DS_Store
+Thumbs.db
+
+# --- Python tooling caches ---
+.mypy_cache/
+.pytest_cache/
+.pyre/
+.pytype/
+
+# --- IDE / Editor garbage ---
+.idea/
+*.swp
+*.swo
+
+# --- Misc ---
+**/__init__.pyc
