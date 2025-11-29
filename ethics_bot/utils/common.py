@@ -6,6 +6,7 @@ from logging.handlers import RotatingFileHandler
 from colorama import Fore, Style
 import xml.etree.ElementTree as ET 
 from sentence_transformers import SentenceTransformer
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from ethics_bot.utils.constants import *
 
 class ColorFormatter(logging.Formatter):
@@ -102,3 +103,54 @@ def clean_text(logger, df):
       .alias("clean_text")
     )
     return df
+
+analyzer = SentimentIntensityAnalyzer()
+
+def get_sentiment_row(text):
+    if not text or not isinstance(text, str):
+        return (0.0, 0.0, 0.0, 0.0)
+    s = analyzer.polarity_scores(text)
+    return (s["neg"], s["neu"], s["pos"], s["compound"])
+
+@timeit
+def add_sentiments(logger, df):
+    logger.info("Adding sentiments to cleansed text")
+    sent_list = [get_sentiment_row(t) for t in df["clean_text"].to_list()]
+    neg, neu, pos, comp = zip(*sent_list)
+
+    df = df.with_columns([
+        pl.Series("sent_neg",  neg),
+        pl.Series("sent_neu",  neu),
+        pl.Series("sent_pos",  pos),
+        pl.Series("sent_comp", comp)
+    ])
+
+    return df
+
+def extract_ner(nlp, text):
+    if not text or not isinstance(text, str):
+        return []
+    doc = nlp(text)
+    return [ent.text for ent in doc.ents]
+
+@timeit
+def enrichment_NER(logger, nlp, df):
+    logger.info("extaracting NER using spacy")
+    ner_list = [extract_ner(nlp, t) for t in df['clean_text'].to_list()]
+
+    logger.info("NER extraction complete")
+    return df.with_columns(
+        pl.Series("ner", ner_list)
+    )
+
+@timeit
+def extract_keywords(kw_model, text):
+    try:
+        kw = kw_model.extract_keywords(
+                text,
+                keyphrase_ngram_range=(1, 2),
+                top_n=5
+        )
+        return [k[0] for k in kw]
+    except:
+        return []

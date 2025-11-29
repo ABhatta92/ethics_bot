@@ -7,6 +7,14 @@ RAW_PATH = DATA_ROOT / "raw"
 INDEX_PATH = DATA_ROOT / "index"
 METADATA_PATH = DATA_ROOT / "metadata"
 EMBEDDED_PATH = DATA_ROOT / "embedded"
+GUTENBERG_KJV_URL = "https://www.gutenberg.org/cache/epub/10/pg10.txt"
+BIBLE_PATH = RAW_PATH / 'bible_kjv.txt'
+TANZIL_PICKTHALL_URL = 'https://tanzil.net/trans/en.pickthall'
+QURAN_PICKTHALL_PATH = RAW_PATH / 'en.pickthall.txt'
+QURAN_SIMPLE_PATH = RAW_PATH / 'quran-simple-clean.txt'
+TANAKH_URL = 'https://www.sefaria.org/api/texts/{}.{}?context=0&commentary=0&lang=en'
+GITA_LINK = 'https://raw.githubusercontent.com/gita/gita/refs/heads/main/data/translation.json'
+
 
 BIBLE_BOOK_MAPPING = {
     # --- Old Testament ---
@@ -79,6 +87,19 @@ BIBLE_BOOK_MAPPING = {
     "The General Epistle of Jude": "Jude",
     "The Revelation of Saint John the Divine": "Revelation",
 }
+
+TANAKH_BOOKS = [
+    "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+    "Joshua", "Judges", "Ruth",
+    "I Samuel", "II Samuel",
+    "I Kings", "II Kings",
+    "I Chronicles", "II Chronicles",
+    "Ezra", "Nehemiah", "Esther",
+    "Job", "Psalms", "Proverbs", "Ecclesiastes", "Song of Songs",
+    "Isaiah", "Jeremiah", "Lamentations", "Ezekiel", "Daniel",
+    "Hosea", "Joel", "Amos", "Obadiah", "Jonah", "Micah",
+    "Nahum", "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi"
+]
 
 # if __name__ == "__main__":
 #     for name, value in list(globals().items()):
