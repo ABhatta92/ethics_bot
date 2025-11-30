@@ -16,9 +16,9 @@ from ethics_bot.utils.constants import *
 app_name = "enrich_texts"
 logger = get_logger(__file__, LOGGER_PATH / f'{app_name}')
 
-df_bible = pl.read_parquet(os.path.join(METADATA_PATH, "bible_metadata.parquet"))
-df_quran = pl.read_parquet(os.path.join(METADATA_PATH, "quran_english_metadata.parquet"))
-df_gita = pl.read_parquet(os.path.join(METADATA_PATH, "gita_english_metadata.parquet"))
+df_bible = pl.read_parquet(os.path.join(BIBLE_DATA, "bible_metadata.parquet"))
+df_quran = pl.read_parquet(os.path.join(QURAN_DATA, "quran_english_metadata.parquet"))
+df_gita = pl.read_parquet(os.path.join(GITA_DATA, "gita_english_metadata.parquet"))
 
 df_bible = add_sentiments(logger, df_bible)
 df_quran = add_sentiments(logger, df_quran)
@@ -35,9 +35,9 @@ df_bible = get_topics(logger, df_bible, kw_model)
 df_quran = get_topics(logger, df_quran, kw_model)
 df_gita = get_topics(logger, df_gita, kw_model)
 
-df_bible.write_parquet(os.path.join(METADATA_PATH, "bible_metadata.parquet"))
-df_quran.write_parquet(os.path.join(METADATA_PATH, "quran_english_metadata.parquet"))
-df_gita.write_parquet(os.path.join(METADATA_PATH, "gita_english_metadata.parquet"))
+df_bible.write_parquet(os.path.join(BIBLE_DATA, "bible_metadata.parquet"))
+df_quran.write_parquet(os.path.join(QURAN_DATA, "quran_english_metadata.parquet"))
+df_gita.write_parquet(os.path.join(GITA_DATA, "gita_english_metadata.parquet"))
 
 build_faiss(logger, 'bible')
 build_faiss(logger, 'quran_english')

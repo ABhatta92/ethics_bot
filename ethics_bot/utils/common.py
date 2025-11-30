@@ -197,3 +197,36 @@ def build_faiss(logger, book):
     faiss.write_index(index, str(index_path))
 
     logger.info(f"Done! Total vectors = {index.ntotal}")
+
+@timeit
+def search_faiss(query, book, k=5):
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    index_path = os.path.join(DATA_ROOT, f'{book}/{book}_index.faiss')
+    metadata_path =  os.path.join(DATA_ROOT, f'{book}/{book}_metadata.parquet')
+    index = faiss.read_index(index_path)
+    metadata = pl.read_parquet(metadata_path)
+    qvec = model.encode([query]).astype("float32")
+    faiss.normalize_L2(qvec)
+    distances, indices = index.search(qvec, k)
+    results = []
+
+    for score, idx in zip(distances[0], indices[0]):
+        # FAISS sometimes returns -1 if not found
+        if idx == -1:
+            continue
+        
+        row = metadata.row(int(idx))
+
+        # row = tuple => convert to dict
+        result = {
+            "tradition": row[metadata.columns.index("tradition")] if "tradition" in metadata.columns else None,
+            "book": row[metadata.columns.index("book")],
+            "chapter": row[metadata.columns.index("chapter")],
+            "verse": row[metadata.columns.index("verse")],
+            "text": row[metadata.columns.index("clean_text")] if "clean_text" in metadata.columns else row[metadata.columns.index("text")],
+            "score": float(score)
+        }
+
+        results.append(result)
+
+    return results

@@ -128,17 +128,43 @@ def process_quran(logger, file_path, source="Pickthall"):
 
 
 @timeit
-def process_gita():
+def process_gita(logger):
     resp = requests.get(GITA_LINK)
-    print(resp.status_code)
+    logger.info(f'Status code: {resp.status_code}')
 
     df = pl.DataFrame(resp.json())
 
     df_filtered = df.filter(pl.col('language_id') == 1).filter(pl.col('author_id') == 19).sort("verse_id")
-    author_name = list(df_filtered.select(pl.col('authorName').unique()))[0][0]
-    author_name = author_name.split(" ")[1]
-    print(author_name)
+    author_name = df_filtered.select(pl.col('authorName').unique()).item()
+    logger.info(f'Using author {author_name}')
 
-    df_filtered = df_filtered.drop(['authorName', 'author_id', 'id', 'lang', 'language_id', 'verse_id'])
+    df_filtered = df_filtered.drop(['authorName', 'author_id', 'id', 'lang', 'language_id'])
     df_filtered = df_filtered.rename({'description':'text'})
+
+    chapter_sizes = [47, 72, 43, 42, 29, 47, 30, 28, 34, 42, 55, 20, 35, 27, 20, 24, 28, 78]
+
+    chapter_numbers = []
+    verse_numbers = []
+
+    current = 0
+    for chap_idx, size in enumerate(chapter_sizes, start=1):
+        for verse_idx in range(1, size+1):
+            chapter_numbers.append(chap_idx)
+            verse_numbers.append(verse_idx)
+            current += 1
+
+    df_filtered = df_filtered.with_columns([
+        pl.Series("chapter", chapter_numbers[:df_filtered.height]),
+        pl.Series("verse", verse_numbers[:df_filtered.height])
+    ])
+
+    df_filtered = df_filtered.with_columns([
+        pl.lit("Hinduism").alias("tradition"),
+        pl.lit("Gita").alias("book"),
+        pl.lit("EN").alias("lang"),
+        pl.lit(author_name).alias("source")
+    ])
+
+    logger.info(f"Processed Gita rows: {df_filtered.height}")
+
     return df_filtered    
