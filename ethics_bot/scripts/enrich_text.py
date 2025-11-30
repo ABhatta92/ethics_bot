@@ -31,15 +31,10 @@ df_quran = enrichment_NER(logger, nlp, df_quran)
 df_gita = enrichment_NER(logger, nlp, df_gita)
 
 kw_model = KeyBERT(model='all-MiniLM-L6-v2')
+df_bible = get_topics(logger, df_bible, kw_model)
+df_quran = get_topics(logger, df_quran, kw_model)
+df_gita = get_topics(logger, df_gita, kw_model)
 
-df_bible = df_bible.with_columns(
-    pl.Series("keywords", [extract_keywords(x) for x in df_bible["clean_text"]])
-)
-
-df_quran = df_quran.with_columns(
-    pl.Series("keywords", [extract_keywords(x) for x in df_quran["clean_text"]])
-)
-
-df_gita = df_gita.with_columns(
-    pl.Series("keywords", [extract_keywords(x) for x in df_gita["clean_text"]])
-)
+df_bible.write_parquet(os.path.join(METADATA_PATH, "bible_metadata.parquet"))
+df_quran.write_parquet(os.path.join(METADATA_PATH, "quran_english_metadata.parquet"))
+df_gita.write_parquet(os.path.join(METADATA_PATH, "gita_english_metadata.parquet"))

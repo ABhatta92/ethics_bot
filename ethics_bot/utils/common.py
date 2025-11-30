@@ -84,9 +84,9 @@ def embed_text(logger, df, book, batch_size):
     logger.info(f"Throughput: {len(texts) / (end - start):.2f} verses/sec")
 
     logger.info(f"Saving embeddings to {book}_embeddings.npy")
-    np.save(os.path.join(EMBEDDED_PATH, f"{book}_embeddings.npy"), embeddings)
+    np.save(os.path.join(os.path.join(DATA_ROOT, book), f"{book}_embeddings.npy"), embeddings)
     logger.info(f"Writing metadata to {book}_metadata.parquet")
-    df.write_parquet(os.path.join(METADATA_PATH, f"{book}_metadata.parquet"))
+    df.write_parquet(os.path.join(os.path.join(DATA_ROOT, book), f"{book}_metadata.parquet"))
 
 @timeit
 def clean_text(logger, df):
@@ -143,7 +143,6 @@ def enrichment_NER(logger, nlp, df):
         pl.Series("ner", ner_list)
     )
 
-@timeit
 def extract_keywords(kw_model, text):
     try:
         kw = kw_model.extract_keywords(
@@ -154,3 +153,10 @@ def extract_keywords(kw_model, text):
         return [k[0] for k in kw]
     except:
         return []
+    
+@timeit
+def get_topics(logger, df, model):
+    df = df.with_columns(
+    pl.Series("keywords", [extract_keywords(model,x) for x in df["clean_text"]])
+    )
+    return df
