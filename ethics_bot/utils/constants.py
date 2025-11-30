@@ -15,8 +15,8 @@ QURAN_SIMPLE_PATH = RAW_PATH / 'quran-simple-clean.txt'
 TANAKH_URL = 'https://www.sefaria.org/api/texts/{}.{}?context=0&commentary=0&lang=en'
 GITA_LINK = 'https://raw.githubusercontent.com/gita/gita/refs/heads/main/data/translation.json'
 BIBLE_DATA = DATA_ROOT / 'bible'
-QURAN_DATA = DATA_ROOT / 'quran'
-GITA_DATA = DATA_ROOT / 'gita'
+QURAN_DATA = DATA_ROOT / 'quran_english'
+GITA_DATA = DATA_ROOT / 'gita_english'
 
 
 BIBLE_BOOK_MAPPING = {

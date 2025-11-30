@@ -1,4 +1,4 @@
-import logging, requests, time, os
+import logging, requests, time, os, faiss
 from functools import wraps
 import numpy as np
 import polars as pl
@@ -160,3 +160,40 @@ def get_topics(logger, df, model):
     pl.Series("keywords", [extract_keywords(model,x) for x in df["clean_text"]])
     )
     return df
+
+@timeit
+def clean_and_embed_text(logger, df, book):
+    df = clean_text(logger, df)
+    embed_text(logger, df, book, 64)
+
+
+@timeit
+def build_faiss(logger, book):
+    if book == 'bible':
+        embeddings_file = os.path.join(BIBLE_DATA, f'{book}_embeddings.npy')
+        index_path = os.path.join(BIBLE_DATA, f'{book}_index.faiss')
+    elif book == 'quran_english':
+        embeddings_file = os.path.join(QURAN_DATA, f'{book}_embeddings.npy')
+        index_path = os.path.join(QURAN_DATA, f'{book}_index.faiss')
+    elif book == 'gita_english':
+        embeddings_file = os.path.join(GITA_DATA, f'{book}_embeddings.npy')
+        index_path = os.path.join(GITA_DATA, f'{book}_index.faiss')
+    logger.info("Loading embeddings...")
+    embeddings = np.load(embeddings_file).astype("float32")
+
+    d = embeddings.shape[1]
+    logger.info(f"Embedding dimension: {d}")
+
+    logger.info("Creating FAISS IndexFlatIP (cosine similarity)...")
+    index = faiss.IndexFlatIP(d)
+
+    logger.info("Normalizing vectors...")
+    faiss.normalize_L2(embeddings)
+
+    logger.info("Adding vectors to index...")
+    index.add(embeddings)
+
+    logger.info(f"Saving FAISS index to {index_path}...")
+    faiss.write_index(index, str(index_path))
+
+    logger.info(f"Done! Total vectors = {index.ntotal}")

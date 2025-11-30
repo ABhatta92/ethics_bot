@@ -128,12 +128,6 @@ def process_quran(logger, file_path, source="Pickthall"):
 
 
 @timeit
-def clean_and_embed_text(logger, df, book):
-    df = clean_text(logger, df)
-    embed_text(logger, df, book, 64)
-
-
-@timeit
 def process_gita():
     resp = requests.get(GITA_LINK)
     print(resp.status_code)

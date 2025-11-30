@@ -38,3 +38,7 @@ df_gita = get_topics(logger, df_gita, kw_model)
 df_bible.write_parquet(os.path.join(METADATA_PATH, "bible_metadata.parquet"))
 df_quran.write_parquet(os.path.join(METADATA_PATH, "quran_english_metadata.parquet"))
 df_gita.write_parquet(os.path.join(METADATA_PATH, "gita_english_metadata.parquet"))
+
+build_faiss(logger, 'bible')
+build_faiss(logger, 'quran_english')
+build_faiss(logger, 'gita_english')
